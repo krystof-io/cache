@@ -73357,6 +73357,11 @@ function getCacheVersion(paths, compressionMethod, enableCrossOsArchive = false)
         .digest("hex");
 }
 function getS3Prefix(paths, { compressionMethod, enableCrossOsArchive }) {
+    const globalCachePrefix = process.env.RUNS_ON_GLOBAL_CACHE_PREFIX;
+    if (globalCachePrefix) {
+        const version = getCacheVersion(paths, compressionMethod, enableCrossOsArchive);
+        return [globalCachePrefix, version].join("/");
+    }
     const repository = process.env.GITHUB_REPOSITORY;
     const version = getCacheVersion(paths, compressionMethod, enableCrossOsArchive);
     return ["cache", repository, version].join("/");
